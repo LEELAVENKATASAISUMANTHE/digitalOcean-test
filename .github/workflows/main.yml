@@ -1,0 +1,20 @@
+name: Test SSH Connection
+
+on:
+  workflow_dispatch:  # run manually
+jobs:
+  test-ssh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test SSH into server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_IP}}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            echo "SSH connection working!"
+            hostname
+            whoami
+            uptime
