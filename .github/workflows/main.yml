@@ -1,0 +1,33 @@
+name: Test SSH Connection
+
+on:
+  workflow_dispatch:  # run manually
+jobs:
+  test-ssh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test SSH into server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_IP}}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+           echo "===== CPU Usage ====="
+            top -bn1 | grep "Cpu(s)"
+
+            echo "===== Memory Usage ====="
+            free -h
+
+            echo "===== Disk / Storage Usage ====="
+            df -h
+
+            echo "===== System Load ====="
+            uptime
+
+            echo "===== Top 10 CPU Processes ====="
+            ps aux --sort=-%cpu | head -10
+
+            echo "===== Top 10 Memory Processes ====="
+            ps aux --sort=-%mem | head -10

@@ -1,0 +1,45 @@
+name: Deploy Nginx Config
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "nginx/**"   # only when nginx config changes
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Upload the nginx config to your server
+      - name: Upload Nginx Config
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.KEY }}
+          source: "nginx/myapp.conf"
+          target: "/etc/nginx/sites-available/myapp.conf"
+
+      # Reload nginx safely
+      - name: Reload Nginx
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            echo "Linking config file..."
+            sudo ln -sf /etc/nginx/sites-available/myapp.conf /etc/nginx/sites-enabled/myapp.conf
+
+            echo "Testing nginx config..."
+            sudo nginx -t
+
+            echo "Reloading nginx..."
+            sudo systemctl reload nginx
+
+            echo "Nginx config deployed successfully!"
