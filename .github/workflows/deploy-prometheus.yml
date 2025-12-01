@@ -20,8 +20,8 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.KEY }}
-          source: "./monitoring/*"
-          target: "~/monitoring"
+          source: "monitoring/"
+          target: "~"
 
       - name: Deploy Prometheus stack
         uses: appleboy/ssh-action@v0.1.7
@@ -31,7 +31,6 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd ~/monitoring
-            docker-compose down
-            docker-compose pull
+            docker-compose down || true
             docker-compose up -d --build
             echo "✅ Prometheus stack deployed successfully!"
