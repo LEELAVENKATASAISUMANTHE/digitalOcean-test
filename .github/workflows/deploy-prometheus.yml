@@ -1,0 +1,37 @@
+name: Deploy Prometheus Stack
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Copy monitoring files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.KEY }}
+          source: "./monitoring/*"
+          target: "~/monitoring"
+
+      - name: Deploy Prometheus stack
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.USER_NAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd ~/monitoring
+            docker compose down
+            docker compose pull
+            docker compose up -d --build
+            echo "✅ Prometheus stack deployed successfully!"
