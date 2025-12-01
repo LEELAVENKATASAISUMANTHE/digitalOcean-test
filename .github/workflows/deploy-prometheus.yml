@@ -31,7 +31,7 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd ~/monitoring
-            docker compose down
-            docker compose pull
-            docker compose up -d --build
+            docker-compose down
+            docker-compose pull
+            docker-compose up -d --build
             echo "✅ Prometheus stack deployed successfully!"
