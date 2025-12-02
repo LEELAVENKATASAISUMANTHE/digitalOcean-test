@@ -51,9 +51,7 @@ services:
         - "3100:3100"
       volumes:
       - ./loki/config.yml:/etc/loki/config.yml
-      - ./loki/data:/loki         # <── Writable data folder
-      - ./loki/wal:/wal           # <── Writable WAL folder
-      user: "0"                     # <── RUN AS ROOT so it can write
+      - loki_data:/loki         # <── Use Docker volume instead of bind mount
       command: -config.file=/etc/loki/config.yml
       restart: unless-stopped
 
@@ -71,3 +69,5 @@ services:
 
 volumes:
   grafana-storage:
+  prometheus_data:
+  loki_data:
