@@ -35,6 +35,7 @@ storage_config:
     directory: /loki/chunks
 
 limits_config:
+  volume_enabled: true
   ingestion_rate_mb: 10
   ingestion_burst_size_mb: 20
   max_streams_per_user: 10000
