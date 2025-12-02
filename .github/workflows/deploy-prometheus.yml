@@ -21,9 +21,9 @@ jobs:
           username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.KEY }}
           source: "monitoring/"
-          target: "~"
+          target: "~/monitoring"
 
-      - name: Deploy Prometheus stack
+      - name: Deploy Monitoring Stack (Prometheus + Grafana + Loki + Promtail)
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -31,6 +31,10 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd ~/monitoring
+            echo "Stopping old containers..."
             docker compose down || true
+
+            echo "Starting updated Prometheus stack with Loki and Promtail..."
             docker compose up -d --build
-            echo "✅ Prometheus stack deployed successfully!"
+
+            echo "✅ Monitoring stack deployed successfully!"
